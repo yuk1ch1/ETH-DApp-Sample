@@ -1,0 +1,3 @@
+[submodule "dApp-starter-project"]
+	path = dApp-starter-project
+	url = git@github.com:yuk1ch1/dApp-starter-project.git

@@ -1,3 +1,5 @@
+// テスト用ファイル
+
 const runMain = async () => {
     try {
         await main();
@@ -14,11 +16,15 @@ const main = async () => {
     // コントラクト所有者のウォレットアドレスとwaveを送るユーザーのウォレットアドレスを変数ownerとrandomPersonに格納
     // Signer object: トランザクションをcontractや他のイーサaccountへ送るために使われる
     // getSignersでつながっているノード状のaccountのリストを取得
-    const [owner, randomPerson] = await hre.ethers.getSigners();
-    const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+    const [owner, randomPerson] = await ethers.getSigners();
+    // コントラクトを取得
+    const waveContractFactory = await ethers.getContractFactory("WavePortal");
+    // 取得したコントラクトをローカルEthereumネットワークにデプロイ
     const waveContract = await waveContractFactory.deploy();
+    // デプロイが完了するまで待つ
     const wavePortal = await waveContract.deployed();
 
+    // デプロイが完了したら各アドレスをログ出力
     console.log("Contract deployed to:", wavePortal.address);
     console.log("Contract deployed by:", owner.address);
 
