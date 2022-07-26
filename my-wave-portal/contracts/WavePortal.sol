@@ -1,9 +1,12 @@
+// WavePortal.sol
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.14;
+
 import "hardhat/console.sol";
 
 contract WavePortal {
+
     uint256 totalWaves;
 
     constructor() {
@@ -12,7 +15,7 @@ contract WavePortal {
 
     function wave() public {
         totalWaves += 1;
-        console.log("%s haas waved!", msg.sender);
+        console.log("%s has waved!", msg.sender);
     }
 
     function getTotalWaves() public view returns (uint256) {
