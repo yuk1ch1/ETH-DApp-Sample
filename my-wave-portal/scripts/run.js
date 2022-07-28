@@ -1,13 +1,36 @@
 // run.js
+// ethersは元々hardhat側でグローバルアクセス可能なものとして提供されている。なのでわざわざフィールド変数として定義すると冗長になるため不要。
+const { ethers } = require("hardhat");
+const { hrtime } = require("process");
+
+const runMain = async () => {
+    try {
+        await main();
+        process.exit(0);
+    } catch(error) {
+        console.log(error);
+        process.exit(1);
+    }
+};
+
+// function Dummy(引数名) {}, funcion(引数名) {}, 引数名 => {} の3つがjsの関数の書き方
+// 上記３つのうち最後のアロー式を用いた関数の書き方
 const main = async () => {
-    const [owner, randomPerson] = await hre.ethers.getSigners();
-    const waveContractFactory = await hre.ethers.getContractFactory("WavePortal");
+    // 任意のアドレスを返す
+    const [owner, randomPerson] = await ethers.getSigners();
+
+    // コントラクトをデプロイするためには追加情報が必要。ContractFactoryはコントラクトのデプロイをサポートする。そのためにhre.ethers.getContractFactoryでContractFactoryのインスタンスを生成
+    const waveContractFactory = await ethers.getContractFactory("WavePortal");
+
+    // このコントラクトのためだけにローカルにEthereumネットワークを作成し、コントラクトのデプロイを開始
     const waveContract = await waveContractFactory.deploy();
+
+    // コントラクトのデプロイ完了を待つ
     const wavePortal = await waveContract.deployed();
-  
+
     console.log("Contract deployed to:", wavePortal.address);
     console.log("Contract deployed by:", owner.address);
-  
+
     let waveCount;
     waveCount = await waveContract.getTotalWaves();
   
@@ -20,16 +43,6 @@ const main = async () => {
     await waveTxn.wait();
   
     waveCount = await waveContract.getTotalWaves();
-  };
-  
-  const runMain = async () => {
-    try {
-      await main();
-      process.exit(0);
-    } catch (error) {
-      console.log(error);
-      process.exit(1);
-    }
-  };
-  
-  runMain();
+};
+
+runMain();
