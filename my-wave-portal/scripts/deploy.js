@@ -4,14 +4,21 @@ const { ethers } = require("hardhat")
 const main = async () => {
   const [deployer] = await ethers.getSigners();
   const accountBalance = await deployer.getBalance();
-  const waveContract = await ethers.getContractFactory("WavePortal");
-  const wavePortal = await waveContract.deploy();
-
 
   console.log("Deploying contracts with account: ", deployer.address);
   console.log("Account balance: ", accountBalance.toString());
-  console.log("Contract deployed to: ", wavePortal.address);
-  console.log("Contract deployed by: ", deployer.address);
+
+  const waveContractFactory = await ethers.getContractFactory("WavePortal");
+  const waveContract = await waveContractFactory.deploy({
+    // デプロイする際にコントラクトに0.001ETHを提供
+    value: ethers.utils.parseEther("0.001")
+  });
+
+  // コントラクトに資金が提供されてデプロイ完了されるのを待つ。
+  const waverPortal = await waveContract.deployed();
+
+
+  console.log("Contract deployed to: ", waverPortal.address);
 };
 
 const runMain = async () => {

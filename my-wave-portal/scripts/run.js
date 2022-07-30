@@ -22,13 +22,21 @@ const main = async () => {
     const waveContractFactory = await ethers.getContractFactory("WavePortal");
 
     // このコントラクトのためだけにローカルにEthereumネットワークを作成し、コントラクトのデプロイを開始
-    const waveContract = await waveContractFactory.deploy();
+    const waveContract = await waveContractFactory.deploy({
+        // デプロイする際に0.1ETHをコントラクトに提供
+        value: ethers.utils.parseEther("0.1")
+    });
 
     // コントラクトのデプロイ完了を待つ
     const wavePortal = await waveContract.deployed();
 
     console.log("Contract deployed to:", wavePortal.address);
     console.log("Contract deployed by:", owner.address);
+
+    // コントラクトの残高を取得し、結果を出力
+    let contractBalance = await ethers.provider.getBalance(wavePortal.address);
+    // wei単位の残高をETH単位に変換した上で出力
+    console.log("Contract balance;", ethers.utils.formatEther(contractBalance));
 
     let waveCount;
     waveCount = await waveContract.getTotalWaves();
@@ -38,8 +46,9 @@ const main = async () => {
     let waveTxn = await waveContract.wave("A message!");
     await waveTxn.wait(); // トランザクションが承認されるのを待つ(テスト: 1回目)
 
-    waveTxn = await waveContract.connect(randomPerson).wave("Another message!");
-    await waveTxn.wait(); // トランザクションが承認されるのを待つ(テスト: 2回目)
+    // waveした後のコントラクトの残高を取得し、結果を出力
+    contractBalance = await ethers.provider.getBalance(waveContract.address);
+    console.log("Contract balance", ethers.utils.formatEther(contractBalance));
 
     let allWaves = await waveContract.getAllWaves()
     console.log(allWaves);
