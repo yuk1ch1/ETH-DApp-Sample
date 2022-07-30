@@ -1,13 +1,12 @@
 // run.js
 // ethersは元々hardhat側でグローバルアクセス可能なものとして提供されている。なのでわざわざフィールド変数として定義すると冗長になるため不要。
 const { ethers } = require("hardhat");
-const { hrtime } = require("process");
 
 const runMain = async () => {
     try {
         await main();
         process.exit(0);
-    } catch(error) {
+    } catch (error) {
         console.log(error);
         process.exit(1);
     }
@@ -33,16 +32,17 @@ const main = async () => {
 
     let waveCount;
     waveCount = await waveContract.getTotalWaves();
-  
-    let waveTxn = await waveContract.wave();
-    await waveTxn.wait();
-  
-    waveCount = await waveContract.getTotalWaves();
-  
-    waveTxn = await waveContract.connect(randomPerson).wave();
-    await waveTxn.wait();
-  
-    waveCount = await waveContract.getTotalWaves();
+    console.log(waveCount.toNumber());
+
+    // waveを送る
+    let waveTxn = await waveContract.wave("A message!");
+    await waveTxn.wait(); // トランザクションが承認されるのを待つ(テスト: 1回目)
+
+    waveTxn = await waveContract.connect(randomPerson).wave("Another message!");
+    await waveTxn.wait(); // トランザクションが承認されるのを待つ(テスト: 2回目)
+
+    let allWaves = await waveContract.getAllWaves()
+    console.log(allWaves);
 };
 
 runMain();
